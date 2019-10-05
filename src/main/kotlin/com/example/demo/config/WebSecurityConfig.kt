@@ -4,33 +4,19 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.provisioning.InMemoryUserDetailsManager
-import org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder
-import org.apache.tomcat.jni.User.username
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
-
-
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig: WebSecurityConfigurerAdapter() {
+class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
+                .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/*").permitAll()
                 .anyRequest().authenticated()
-    }
-
-    override fun userDetailsService(): UserDetailsService {
-        val user = withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build()
-
-        return InMemoryUserDetailsManager(user)
+                .and()
+                .httpBasic()
     }
 
 }
